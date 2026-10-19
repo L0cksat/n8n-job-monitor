@@ -131,17 +131,17 @@
         "operation": "appendOrUpdate",
         "documentId": {
           "__rl": true,
-          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "value": "YOUR_GOOGLE_SHEET_ID",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -424,7 +424,7 @@
             },
             {
               "name": "x-csrf-token",
-              "value": "P6ewRr0QuiLFSoQFKpFjllCICW0="
+              "value": "YOUR_WTTJ_CSRF_TOKEN"
             }
           ]
         },
@@ -553,7 +553,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://securetoken.googleapis.com/v1/token?key=AIzaSyCw2QBeUA3Ta7HFfDpzZEKqZo4WhvMPh3Y",
+        "url": "https://securetoken.googleapis.com/v1/token?key=YOUR_FIREBASE_API_KEY",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
@@ -563,7 +563,7 @@
             },
             {
               "name": "refresh_token",
-              "value": "AMf-vByXlImncPZV_vKXkHQkeBympGhbt0X_RDg4GhFiIUX5PRlt0gICHMI_uX9LKUciCgTJSsUmhgb4u-y42_z8SfYiGAV1otgsPe94E3NRuEy1lsk4vTho2AekcQ3fZLRlg2iDu6ic5L_NUv0mwWjoOr5I5prJLP8E5Ln1cVQz7SC2Ak7rHjY"
+              "value": "YOUR_JOPPY_REFRESH_TOKEN"
             }
           ]
         },
@@ -678,7 +678,7 @@
     },
     {
       "parameters": {
-        "chatId": "5736423989",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=🚀 *NUEVA OFERTA APROBADA* 🚀\n\n*Puesto:* {{ $('Filter').item.json.title }}\n*Empresa:* {{ $('Filter').item.json.company }}\n*Salario:* {{ $json.salary }}\n*Fuente:* {{ $('Filter').item.json.source }}\n\n🧠 *Razonamiento del CTO:*\n{{ $json.razonamiento_cto }}\n\n🔗 [Ver oferta completa]({{ $('Filter').item.json.url.replace(/\\)/g, '') }})",
         "additionalFields": {}
       },
@@ -828,7 +828,7 @@
     },
     {
       "parameters": {
-        "chatId": "5736423989",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=✅ *REVISIÓN DIARIA COMPLETADA*\nNo hay nuevas solicitudes en ghosting 👻 por hoy (hay {{ $('If1').all(1).length }} candidaturas activas dentro de plazo).\n\n\n👨🏽‍💻 Por favor consulta tu Google Sheets y prueba de nuevo. 👨🏽‍💻\n\n¡Gracias!\n",
         "additionalFields": {}
       },
@@ -850,7 +850,7 @@
     },
     {
       "parameters": {
-        "chatId": "5736423989",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=📝 *GOOGLE SHEETS ACTUALIZADO* 📝\n\nSe han actualizado las filas con solicitudes que han sobrepasado los 15 días.\n\n👻 Te han hecho *ghosting* {{ $('Update row in sheet').all().length }} empresas. Boo! 👻\n\nEstas han sido las empresas que no te quieren...\n{{ $('Update row in sheet').all().map(item => `· ${item.json.Empresa}`).join('\\n') }}\n\n*Boo* 👻 por su parte!👎😤\n\n👨🏽‍💻 Por favor, revise el *Google Sheets* para más información. 👨🏽‍💻\n\n¡Gracias! 😎",
         "additionalFields": {}
       },
@@ -896,17 +896,17 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "value": "YOUR_GOOGLE_SHEET_ID",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
         },
         "filtersUI": {
           "values": [
@@ -939,17 +939,17 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "value": "YOUR_GOOGLE_SHEET_ID",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -1136,17 +1136,17 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "value": "YOUR_GOOGLE_SHEET_ID",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
         },
         "filtersUI": {
           "values": [
@@ -1251,17 +1251,17 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "value": "YOUR_GOOGLE_SHEET_ID",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -1457,7 +1457,7 @@
     },
     {
       "parameters": {
-        "chatId": "5736423989",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=⏳ *SEGUIMIENTO DE CANDIDATURAS* ⏳\n\nSe han actualizado las solicitudes que se encuentran activas y dentro del plazo establecido.\n\n📊 Se han puesto al día *{{ $('Update row in sheet1').all().length }}* ofertas en plazo.\n\n*Empresas monitorizadas:*\n{{ $('Check time of Enviado').all().map(item => `• ${item.json.Empresa} (${item.json.Puesto})`).join('\\n') }}\n\n---\n💻 *Todo en orden en el Google Sheets.*\n\n¡Saludos!",
         "additionalFields": {}
       },
@@ -1490,7 +1490,7 @@
     },
     {
       "parameters": {
-        "chatId": "5736423989",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=🔍 *REVISIÓN DE ESTADOS (PLAZOS)* 🔍\n\nSe ha completado el escaneo diario de plazos.\n\nℹ️ Se han evaluado *{{ $('If2').all().length }}* registros que no cumplían las condiciones para este rango (ya sea por estar fuera de plazo o en otro estado).\n\n---\n🤖 *Ejecución completada sin incidencias.*\n\n¡Saludos!",
         "additionalFields": {}
       },
@@ -1559,17 +1559,17 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "value": "YOUR_GOOGLE_SHEET_ID",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -1765,7 +1765,7 @@
     },
     {
       "parameters": {
-        "chatId": "5736423989",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=👻 *ALERTA DE GHOSTING DETECTADO* 👻\n\nHan pasado más de 15 días sin respuesta en algunas candidaturas y se han actualizado automáticamente a *Rechazado - Ghosting*.\n\n📉 Total de ofertas afectadas: *{{ $('Update row in sheet2').all().length }}*\n\n*Empresas que han aplicado silencio administrativo:*\n{{ $('Check time of Enviado').all().map(item => `• ${item.json.Empresa} (${item.json.Puesto})`).join('\\n') }}\n\n---\n🧹 *Google Sheets actualizado.* ¡A por la siguiente! 🚀\n\n¡Ánimo y saludos!",
         "additionalFields": {}
       },
@@ -1787,7 +1787,7 @@
     },
     {
       "parameters": {
-        "chatId": "5736423989",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=📥 *NUEVAS OFERTAS REGISTRADAS* 📥\n\nSe han añadido o actualizado solicitudes en el sistema de seguimiento.\n\n📊 Total de registros procesados: *{{ $('Append or update row in sheet').all().length }}*\n\n⚠️ *Estado de revisión:*\nEstas ofertas aún *no han sido validadas/vetadas* por mi. Requieren de tu visto bueno antes de continuar.\n\n*Empresas añadidas/actualizadas:*\n{{ $('Append or update row in sheet').all().map(item => `• ${item.json.Empresa || item.json.Puesto || 'Oferta detectada'}`).join('\\n') }}\n\n---\n📋 Por favor, *revisa el Google Sheets* para examinar los detalles y emitir tu veredicto. 🧐\n\n¡Saludos!",
         "additionalFields": {}
       },
@@ -1876,8 +1876,8 @@
     },
     {
       "parameters": {
-        "fromEmail": "mrjobs@stephennicholasjones.com",
-        "toEmail": "nicky@stephennicholasjones.com",
+        "fromEmail": "YOUR_FROM_EMAIL",
+        "toEmail": "YOUR_TO_EMAIL",
         "subject": "={{ `☕ Briefing Diario CTO | ${$('Append or update row in sheet').isExecuted ? $('Append or update row in sheet').all().length : 0} nuevas ofertas y actualización de candidaturas` }}",
         "html": "={{ $json.content.replace(/```html|```/g, '').trim() }}\n<br><hr style=\"border:none; border-top:1px solid #eaeaea; margin:20px 0;\">\n<table style=\"font-family: Arial, sans-serif; color: #333;\">\n  <tr>\n    <td style=\"padding-right: 15px;\">\n      <img src=\"https://i.imgur.com/lvqesBa.jpeg\" alt=\"Mr. Jobs\" width=\"75\" height=\"75\" style=\"border-radius: 50%; object-fit: cover; border: 2px solid #007bff;\">\n    </td>\n    <td>\n      <strong style=\"font-size: 16px; color: #111;\">Mr. Jobs</strong><br>\n      <span style=\"font-size: 13px; color: #555;\">Chief Technology Officer (CTO) & AI Agent</span><br>\n      <a href=\"https://stephennicholasjones.com\" style=\"font-size: 12px; color: #007bff; text-decoration: none;\">stephennicholasjones.com</a>\n    </td>\n  </tr>\n</table>",
         "options": {}
@@ -2016,8 +2016,8 @@
     },
     {
       "parameters": {
-        "fromEmail": "mrjobs@stephennicholasjones.com",
-        "toEmail": "nicky@stephennicholasjones.com",
+        "fromEmail": "YOUR_FROM_EMAIL",
+        "toEmail": "YOUR_TO_EMAIL",
         "subject": "={{ `🚀 Nuevas Ofertas Insertadas Hoy (${$('Append or update row in sheet').all().length}) | Revisión CTO` }}",
         "html": "={{ $json.content.replace(/```html|```/g, '').trim() }}\n<br><hr style=\"border:none; border-top:1px solid #eaeaea; margin:20px 0;\">\n<table style=\"font-family: Arial, sans-serif; color: #333;\">\n  <tr>\n    <td style=\"padding-right: 15px;\">\n      <img src=\"https://i.imgur.com/lvqesBa.jpeg\" alt=\"Mr. Jobs\" width=\"75\" height=\"75\" style=\"border-radius: 50%; object-fit: cover; border: 2px solid #007bff;\">\n    </td>\n    <td>\n      <strong style=\"font-size: 16px; color: #111;\">Mr. Jobs</strong><br>\n      <span style=\"font-size: 13px; color: #555;\">Chief Technology Officer (CTO) & AI Agent</span><br>\n      <a href=\"https://stephennicholasjones.com\" style=\"font-size: 12px; color: #007bff; text-decoration: none;\">stephennicholasjones.com</a>\n    </td>\n  </tr>\n</table>",
         "options": {}
