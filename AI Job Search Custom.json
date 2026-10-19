@@ -1,0 +1,2701 @@
+{
+  "name": "AI Job Search Custom",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 9 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1536,
+        640
+      ],
+      "id": "094fa9b7-ff6e-4034-a2d4-87956d9409c6",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        80
+      ],
+      "id": "bce3b84b-e24d-496a-bf22-cc226a1e58d9",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:11434/api/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    \"model\": \"llama3.1\",\n    \"prompt\": \"Eres Mr. Jobs, un CTO técnico filtrando ofertas de trabajo para Stephen (candidato Junior/Mid). Evalúa la compatibilidad basándote estrictamente en este perfil:\\n\\nPERFIL DE STEPHEN:\\n- Nivel: Junior / Entry-Level / Mid (hasta 3 años máx). Graduado en DAW + 13 años de experiencia operativa.\\n- Stack Desarrollo: Java (Spring Boot), Python (FastAPI, Django, Flask), TypeScript, Angular, Node.js, SQL (MySQL), MongoDB, Docker, Git, Linux.\\n- Stack IA & Automatización: n8n (avanzado), Agentes IA, servidores MCP, creación de Skills, arquitecturas RAG, LLMs (Ollama), Prompt Engineering, Cursor.\\n- Idiomas: Inglés nativo y Español nativo.\\n\\nREGLAS CRÍTICAS DE RECHAZO AUTOMÁTICO (Responde NO):\\n1. Nivel Senior: Exige perfil 'Senior', 'Lead', 'Principal', 'Staff' o más de 3-4 años de experiencia.\\n2. Ubicación/Modalidad: Rechaza cualquier oferta Presencial o Híbrida FUERA de la Comunidad Valenciana (Alicante, Valencia, Castellón, Torrevieja, Elche, Murcia). Solo acepta 100% Remoto o Híbrido/Presencial si es en la Comunidad Valenciana.\\n3. No es una oferta real: Si el título o descripción es solo el eslogan de una empresa (ej. 'Digital healthcare insurance') sin especificar un puesto técnico.\\n4. Stack incompatible: Puestos exclusivos de C#/.NET, PHP/Moodle, Ruby, Go, Rust o Marketing/Ventas.\\n\\nResponde ESTRICTAMENTE empezando con 'SÍ' o 'NO', seguido de una puntuación del 1 al 10 entre paréntesis (ej: (8/10)), un guion y una frase corta explicando el motivo.\\n\\nTítulo: \" + $json.title + \"\\nEmpresa: \" + $json.company + \"\\nDescripción: \" + $json.description,\n    \"stream\": false\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        336,
+        560
+      ],
+      "id": "34055994-477f-40c5-b59f-b560e4f7b1e7",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "03dfb2ff-200a-4e03-addd-e719bd5ab785",
+              "leftValue": "={{ $json.response }}",
+              "rightValue": "SÍ",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        736,
+        400
+      ],
+      "id": "cc43ac89-55f1-45ca-8625-abf9a2a137fb",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "url": "https://freehire.me/api/v1/agent/jobs/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "remote",
+              "value": "true"
+            },
+            {
+              "name": "country",
+              "value": "es"
+            },
+            {
+              "name": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "freehire-search-skill/1.0 (+[https://freehire.me](https://freehire.me))"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -832,
+        80
+      ],
+      "id": "e22f9eee-0b60-4bc8-aa64-60ffab98b33f",
+      "name": "HTTP Request - freehire.me"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "mode": "list",
+          "cachedResultName": "Job Application Tracker 2.0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Empresa": "={{ $('Filter').item.json.company }}",
+            "URL": "={{ $('Filter').item.json.url.replace(/\\)/g, '') }}",
+            "Puesto": "={{ $('Filter').item.json.title }}",
+            "Estado": "Guardado",
+            "Notas / Siguientes Pasos": "={{ $json.razonamiento_cto }}",
+            "Página Web": "={{ $('Filter').item.json.source }}",
+            "Compatibilidad": "={{\n  (() => {\n    const veredicto = $json.veredicto_cto;\n    const razonamiento = $json.razonamiento_cto || \"\";\n    const textoCompleto = razonamiento.toLowerCase();\n\n    if (veredicto === \"APROBADO\") {\n      // Si está aprobado, determinamos si es excepcional o media-alta\n      if (textoCompleto.includes(\"excepcional\") || textoCompleto.includes(\"perfecto\") || textoCompleto.includes(\"ideal\")) {\n        return \"Alta (9/10)\";\n      }\n      return \"Media-Alta (7/10)\";\n    } else {\n      // Si está rechazado, clasificamos según el nivel de afinidad o motivo\n      if (textoCompleto.includes(\"junior\") || textoCompleto.includes(\"fringe\")) {\n        return \"Media (5/10)\";\n      }\n      if (textoCompleto.includes(\"senior\") || textoCompleto.includes(\"experiencia\")) {\n        return \"Baja (4/10)\";\n      }\n      return \"Baja (2/10)\";\n    }\n  })()\n}}"
+          },
+          "matchingColumns": [
+            "URL"
+          ],
+          "schema": [
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Puesto",
+              "displayName": "Puesto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stack Principal",
+              "displayName": "Stack Principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Página Web",
+              "displayName": "Página Web",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tiene Easy Apply?",
+              "displayName": "Tiene Easy Apply?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha Enviada Solicitud",
+              "displayName": "Fecha Enviada Solicitud",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Compatibilidad",
+              "displayName": "Compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notas / Siguientes Pasos",
+              "displayName": "Notas / Siguientes Pasos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1792,
+        400
+      ],
+      "id": "ab725d59-3b67-49b8-be77-28b9bfcb394a",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UW4iyAZ8p6MyFAVR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "hKByXkMQaC5Qt9UMN",
+          "mode": "list",
+          "cachedResultName": "Linkedin Jobs Scraper (curious_coder/linkedin-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/hKByXkMQaC5Qt9UMN/input"
+        },
+        "customBody": "={\n  \"autoConvertToAiSearch\": true,\n  \"datePosted\": \"past24Hours\",\n  \"keywords\": \"(\\\"Junior Backend\\\" OR \\\"Junior Full Stack\\\" OR \\\"Spring Boot\\\" OR \\\"Angular\\\" OR \\\"Python\\\") AND Remote\",\n  \"limitPerSource\": 20,\n  \"location\": \"Spain\",\n  \"scrapeCompany\": true,\n  \"splitByLocation\": false,\n  \"under10Applicants\": false,\n  \"urls\": [],\n  \"companyIds\": []\n}"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        336
+      ],
+      "id": "3028bc4f-19cc-4d6b-9a1c-0d3c5127ae25",
+      "name": "Run an Actor and get dataset",
+      "credentials": {
+        "apifyApi": {
+          "id": "x265pKxytobeGPyn",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "753dd301-c05e-418a-aa97-e9c7a392a702",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "6e9129a4-c4da-492d-80a2-fc044f04af5c",
+              "name": "company",
+              "value": "={{ $json.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "7fd36751-7ed1-4377-a268-2a496e4de96c",
+              "name": "url",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "d3f4009a-26ea-4d00-a5ae-13c566751be3",
+              "name": "description",
+              "value": "={{ $json.descriptionText }}",
+              "type": "string"
+            },
+            {
+              "id": "b1087a50-85cc-4e97-9801-3b8b01c98185",
+              "name": "source",
+              "value": "LinkedIn",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        336
+      ],
+      "id": "05defa58-c986-40e5-a3f1-b69960aa59ea",
+      "name": "Edit Fields Apify"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "465c8c71-ae70-4f9d-9a3b-00a18a015606",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "7cd6980b-0cfd-42e5-9581-53fdf319a4dc",
+              "name": "company",
+              "value": "={{ $json.company }}",
+              "type": "string"
+            },
+            {
+              "id": "9d7add2a-2d15-468f-b6dd-6f57540fbb5e",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "fd87f04a-f215-435e-958b-d0947f4cfcda",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        80
+      ],
+      "id": "53f08aa3-0cc7-48f8-a0ae-d86c19fecdf1",
+      "name": "Edit Fields - freehire.me"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        544,
+        416
+      ],
+      "id": "58511cc1-df27-43ca-91e6-50a3a9e213b9",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        80,
+        432
+      ],
+      "id": "1ab3326e-944e-4803-9a4e-05c2a68d2264",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.exp.welcometothejungle.com/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-csrf-token",
+              "value": "P6ewRr0QuiLFSoQFKpFjllCICW0="
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"operationName\": \"PersonalisedCompanies\",\n    \"query\": \"query PersonalisedCompanies($offset: Int!, $limit: Int!, $companyName: String!, $companySizes: [ID!], $sectorTagPreferences: [SectorTagPreferenceInput!], $investorPreferences: [InvestorPreferenceInput!], $locationPreferences: [Location!], $currency: Currency) {\\n  personalisedCompanies(\\n    offset: $offset\\n    limit: $limit\\n    companyName: $companyName\\n    companySizes: $companySizes\\n    sectorTagPreferences: $sectorTagPreferences\\n    investorPreferences: $investorPreferences\\n    locationPreferences: $locationPreferences\\n  ) {\\n    id\\n    urlSafeName\\n    name\\n    logoPath\\n    faviconPath\\n    primaryColour\\n    shortDescription\\n    totalFunding(currency: $currency) {\\n      amount\\n      currency\\n      __typename\\n    }\\n    size {\\n      id\\n      value\\n      __typename\\n    }\\n    sectorTags {\\n      id\\n      value\\n      __typename\\n    }\\n    jobLocations\\n    brandAssetGroups(groups: [COMPANY_DISCOVERY_PICTURE]) {\\n      ...SpotlightBrandAssetGroup\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment BrandAsset on CompanyBrandAsset {\\n  id\\n  type\\n  source\\n  shortTitle\\n  longTitle\\n  category\\n  alt\\n  category\\n  __typename\\n}\\n\\nfragment BrandAssetLink on CompanyBrandAssetLink {\\n  id\\n  companyBrandAsset {\\n    ...BrandAsset\\n    __typename\\n  }\\n  mobilePlacement {\\n    id\\n    sourceSet(containerWidth: 300)\\n    source(containerWidth: 300)\\n    orientation\\n    width\\n    __typename\\n  }\\n  desktopPlacement {\\n    id\\n    sourceSet(containerWidth: 500)\\n    source(containerWidth: 500)\\n    orientation\\n    width\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment SpotlightBrandAssetGroup on CompanyBrandAssetGroup {\\n  id\\n  group {\\n    id\\n    name\\n    __typename\\n  }\\n  links {\\n    ...BrandAssetLink\\n    __typename\\n  }\\n  __typename\\n}\\n\",\n    \"variables\": {\n        \"companyName\": \"\",\n        \"companySizes\": [],\n        \"currency\": \"EUR\",\n        \"limit\": 16,\n        \"locationPreferences\": [\n            \"REMOTE_EUROPE\",\n            \"REMOTE_SPAIN\"\n        ],\n        \"offset\": 0,\n        \"sectorTagPreferences\": []\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -800,
+        576
+      ],
+      "id": "f7c9cd40-bca0-44ea-8192-b0a86aca0be2",
+      "name": "HTTP Request - WTTJ"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.personalisedCompanies",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        576
+      ],
+      "id": "e34242f6-3a6c-4e82-a5d5-40611dde80b7",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "465c8c71-ae70-4f9d-9a3b-00a18a015606",
+              "name": "title",
+              "value": "={{ $json.shortDescription || $json.json?.shortDescription }}",
+              "type": "string"
+            },
+            {
+              "id": "7cd6980b-0cfd-42e5-9581-53fdf319a4dc",
+              "name": "company",
+              "value": "={{ $json.name || $json.json?.name }}",
+              "type": "string"
+            },
+            {
+              "id": "9d7add2a-2d15-468f-b6dd-6f57540fbb5e",
+              "name": "url",
+              "value": "={{ \"(https://app.welcometothejungle.com/companies/)\" + ($json.urlSafeName || $json.json?.urlSafeName) }}",
+              "type": "string"
+            },
+            {
+              "id": "fd87f04a-f215-435e-958b-d0947f4cfcda",
+              "name": "source",
+              "value": "=Welcome to the Jungle",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -416,
+        576
+      ],
+      "id": "f39d2dfd-7628-4fb3-8684-be31684bde47",
+      "name": "Edit Fields - WTTJ"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d44df20e-4646-4e88-a2e4-f1620bbbd3c7",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "cdab5b2e-f871-4f22-ba29-1464ae955f0f",
+              "name": "company",
+              "value": "={{ $json.recruiter.company.name }}",
+              "type": "string"
+            },
+            {
+              "id": "9f3fc662-e4ca-488d-a040-ad21066aec36",
+              "name": "url",
+              "value": "={{ $json.url || 'https://joppy.me/offer/' + $json.uid }}",
+              "type": "string"
+            },
+            {
+              "id": "883eb3d6-4cad-4f15-94e3-61769e03a957",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "e322b136-195a-4691-b064-0d3e0af23314",
+              "name": "salary",
+              "value": "={{ $json.salaryMin ? $json.salaryMin + ' - ' + $json.salaryMax + ' €' : 'Salario oculto' }}",
+              "type": "string"
+            },
+            {
+              "id": "317cb994-04dd-403a-a543-c14036fc50b5",
+              "name": "source",
+              "value": "Joppy",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        768
+      ],
+      "id": "c3d87771-75b8-4df9-b093-0cd09761278c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://securetoken.googleapis.com/v1/token?key=AIzaSyCw2QBeUA3Ta7HFfDpzZEKqZo4WhvMPh3Y",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "refresh_token"
+            },
+            {
+              "name": "refresh_token",
+              "value": "AMf-vByXlImncPZV_vKXkHQkeBympGhbt0X_RDg4GhFiIUX5PRlt0gICHMI_uX9LKUciCgTJSsUmhgb4u-y42_z8SfYiGAV1otgsPe94E3NRuEy1lsk4vTho2AekcQ3fZLRlg2iDu6ic5L_NUv0mwWjoOr5I5prJLP8E5Ln1cVQz7SC2Ak7rHjY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -640,
+        768
+      ],
+      "id": "cfb2a50b-c136-44c2-ba66-0015062c86b9",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3.1:latest",
+          "mode": "list",
+          "cachedResultName": "llama3.1:latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Título: {{ $json.title }} - Empresa: {{$json.company }} - Salario: {{ $json.salary }} - Descripción: {{ $json.description }}"
+            }
+          ]
+        },
+        "options": {
+          "system": "=Eres Mr. Jobs, un CTO técnico analítico y estricto. Tu objetivo es auditar ofertas de trabajo para Stephen (Junior/Mid Full-Stack & AI Automation Engineer).\n\nPERFIL DE STEPHEN:\n- Nivel: Junior a Mid (0 a 3 años de experiencia técnica).\n- Stack: Java (Spring Boot), Python, TypeScript, Angular, Node.js, SQL, Docker.\n- Especialidad IA: Automatización con n8n, Agentes IA, MCP, RAG, LLMs, Prompt Engineering.\n- Ubicación: Alicante (Comunidad Valenciana, España).\n\nREGLAS DE RECHAZO AUTOMÁTICO (\"RECHAZADO\"):\n1. Piden perfil Senior (+4 años de experiencia obligatoria).\n2. Es Presencial o Híbrido fuera de la Comunidad Valenciana (ej. Híbrido en Madrid, Barcelona o extranjero = RECHAZADO, salvo que permita 100% remoto).\n3. No describe un puesto de trabajo real o no especifica requisitos técnicos (ej. fichas genéricas de empresas).\n4. El stack principal es totalmente ajeno (C#, .NET, PHP, Ruby, iOS/Swift, C++).\n\nINSTRUCCIÓN CRÍTICA:\nResponde EXCLUSIVAMENTE con un objeto JSON válido:\n{\n  \"veredicto\": \"APROBADO\", // o \"RECHAZADO\"\n  \"razonamiento\": \"Explicación directa de máximo 2 líneas del motivo.\"\n}",
+          "format": "json"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        944,
+        400
+      ],
+      "id": "e620def2-f45c-466f-93f1-9b846e505bf9",
+      "name": "Message a model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "jB3uXo25suoehbXJ",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6cc46174-1ae5-4c71-bc53-b732ca2db8cd",
+              "name": "veredicto_cto",
+              "value": "={{ JSON.parse($json.content.replace(/```json|```/g, '').trim()).veredicto }}",
+              "type": "string"
+            },
+            {
+              "id": "38952c35-2735-43b1-82cf-ddd1a976a89f",
+              "name": "razonamiento_cto",
+              "value": "={{ JSON.parse($json.content.replace(/```json|```/g, '').trim()).razonamiento }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1296,
+        400
+      ],
+      "id": "458d4e6a-92fa-4e8b-a772-8190bb20c2a2",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c1e0e2e5-6b6c-4ed2-bd88-a4143e2c2505",
+              "leftValue": "={{ $json.veredicto_cto }}",
+              "rightValue": "APROBADO",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1536,
+        496
+      ],
+      "id": "137ffbdb-7fa1-49f7-ba88-c97b0d8bf330",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=🚀 *NUEVA OFERTA APROBADA* 🚀\n\n*Puesto:* {{ $('Filter').item.json.title }}\n*Empresa:* {{ $('Filter').item.json.company }}\n*Salario:* {{ $json.salary }}\n*Fuente:* {{ $('Filter').item.json.source }}\n\n🧠 *Razonamiento del CTO:*\n{{ $json.razonamiento_cto }}\n\n🔗 [Ver oferta completa]({{ $('Filter').item.json.url.replace(/\\)/g, '') }})",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        592
+      ],
+      "id": "557b62c5-2550-46d1-9a01-eb2cf6a12701",
+      "name": "Send a text message",
+      "webhookId": "a3beaad3-f270-4945-a633-73c557bb4cfc",
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.joppy.me/explorer/specialities/bee711e1-c42a-48b3-aa43-35e9081aac7e/offers?page=0&uidSpeciality=bee711e1-c42a-48b3-aa43-35e9081aac7e,6949afe3-5f03-46e8-bbf1-ed95bb10aeaf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ \"Bearer \" + $json.id_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -432,
+        768
+      ],
+      "id": "81c11719-c5b4-43a5-912a-4378171af049",
+      "name": "HTTP Request - Joppy"
+    },
+    {
+      "parameters": {
+        "url": "https://www.tecnoempleo.com/ofertas-trabajo/?en_remoto=,1,&forma_minima=,6,&ex=,3,4,",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -592,
+        1024
+      ],
+      "id": "0d325932-178f-4dc6-bac1-e3010945629e",
+      "name": "HTTP Request - tecnoempleo.com"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": "a.font-weight-bold.text-cyan-700",
+              "returnArray": true
+            },
+            {
+              "key": "url",
+              "cssSelector": "a.font-weight-bold.text-cyan-700",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            },
+            {
+              "key": "company",
+              "cssSelector": "h3.fs-5 + a",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        1024
+      ],
+      "id": "fe8f1209-2b94-41af-ab00-34da52efe474",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst titles = item.title || [];\nconst urls = item.url || [];\nconst companies = item.company || [];\n\nconst results = [];\n\nfor (let i = 0; i < titles.length; i++) {\n  results.push({\n    json: {\n      title: titles[i],\n      url: urls[i],\n      company: companies[i] || \"No especificada\",\n      source: \"Tecnoempleo\"\n    }\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        1024
+      ],
+      "id": "839d787f-dae1-4396-8a9e-910272bfde4b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7c231c75-06c4-4b1e-8caf-1ab16340bcbe",
+              "leftValue": "={{ $json.esGhosting }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3312,
+        480
+      ],
+      "id": "2532ce68-6410-4980-b331-ea0a4d2059e1",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=✅ *REVISIÓN DIARIA COMPLETADA*\nNo hay nuevas solicitudes en ghosting 👻 por hoy (hay {{ $('If1').all(1).length }} candidaturas activas dentro de plazo).\n\n\n👨🏽‍💻 Por favor consulta tu Google Sheets y prueba de nuevo. 👨🏽‍💻\n\n¡Gracias!\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3760,
+        576
+      ],
+      "id": "ac55c6ec-3e57-456d-97e9-29f1d5565995",
+      "name": "Send a text message1",
+      "webhookId": "d6689082-ee9b-4999-8cd6-09624724978d",
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=📝 *GOOGLE SHEETS ACTUALIZADO* 📝\n\nSe han actualizado las filas con solicitudes que han sobrepasado los 15 días.\n\n👻 Te han hecho *ghosting* {{ $('Update row in sheet').all().length }} empresas. Boo! 👻\n\nEstas han sido las empresas que no te quieren...\n{{ $('Update row in sheet').all().map(item => `· ${item.json.Empresa}`).join('\\n') }}\n\n*Boo* 👻 por su parte!👎😤\n\n👨🏽‍💻 Por favor, revise el *Google Sheets* para más información. 👨🏽‍💻\n\n¡Gracias! 😎",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3920,
+        384
+      ],
+      "id": "a709f67f-fdce-456c-a229-43c395085a1b",
+      "name": "Send a text message2",
+      "webhookId": "277cbb72-a7c2-416e-8343-ea5a7bda0fc0",
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        3712,
+        384
+      ],
+      "id": "cfb6ef20-0cb8-47fb-b6ea-9af289926fa0",
+      "name": "Limit"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        3520,
+        576
+      ],
+      "id": "01c82742-13a3-430e-84e1-df67854de00d",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "mode": "list",
+          "cachedResultName": "Job Application Tracker 2.0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Estado",
+              "lookupValue": "Enviado - En plazo (< 15 días)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2896,
+        480
+      ],
+      "id": "bd03342a-91f0-44f1-9bcb-54429892e772",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UW4iyAZ8p6MyFAVR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "mode": "list",
+          "cachedResultName": "Job Application Tracker 2.0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Estado": "Rechazado - Ghosting",
+            "Orden": "={{ $json.Orden }}"
+          },
+          "matchingColumns": [
+            "Orden"
+          ],
+          "schema": [
+            {
+              "id": "Orden",
+              "displayName": "Orden",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Puesto",
+              "displayName": "Puesto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Stack Principal",
+              "displayName": "Stack Principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Página Web",
+              "displayName": "Página Web",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tiene Easy Apply?",
+              "displayName": "Tiene Easy Apply?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha Enviada Solicitud",
+              "displayName": "Fecha Enviada Solicitud",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Compatibilidad",
+              "displayName": "Compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "veredicto_cto",
+              "displayName": "veredicto_cto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "razonamiento_cto",
+              "displayName": "razonamiento_cto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Notas / Siguientes Pasos",
+              "displayName": "Notas / Siguientes Pasos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3536,
+        384
+      ],
+      "id": "1603e4f9-5b4c-494a-a543-430327b6c935",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UW4iyAZ8p6MyFAVR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "mode": "list",
+          "cachedResultName": "Job Application Tracker 2.0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Estado",
+              "lookupValue": "Enviado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4416,
+        432
+      ],
+      "id": "404f72fb-a4c7-499c-a787-c3a6b654498d",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UW4iyAZ8p6MyFAVR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Suponiendo que tu columna se llama \"Fecha Enviada Solicitud\"\nconst fechaEnvioStr = $json['Fecha Enviada Solicitud'];\n\nif (!fechaEnvioStr || typeof fechaEnvioStr !== 'string' || !fechaEnvioStr.includes('/')) {\n  return { json: { ...$json, diasTranscurridos: 0, enPlazo: false, esGhosting: false } };\n}\n\n//Desglosar DD/MM/YYYY\nconst partes = fechaEnvioStr.trim().split('/');\nconst dia = parseInt(partes[0], 10);\nconst mes = parseInt(partes[1], 10) - 1;\nlet anio = parseInt(partes[2], 10);\n\nif (anio < 100) { anio += 2000 };\n\nconst fechaEnvio = new Date(anio, mes, dia);\nconst hoy = new Date();\n\n//Normalizar a medianoche para contar días naturales\nfechaEnvio.setHours(0, 0, 0, 0);\nhoy.setHours(0, 0, 0, 0);\n\nconst diferenciaMs = hoy.getTime() - fechaEnvio.getTime();\nconst diasTranscurridos = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));\n\n//Condición: Entre 2 y 15 días\nconst enPlazo = diasTranscurridos >=2 && diasTranscurridos < 15;\nconst esGhosting = diasTranscurridos > 15;\n\nreturn {\n  json: {\n    ...$json,\n    diasTranscurridos: diasTranscurridos,\n    enPlazo: enPlazo,\n    esGhosting: esGhosting\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4624,
+        432
+      ],
+      "id": "a2fcee2c-7f7d-479b-9651-b04375f69948",
+      "name": "Check time of Enviado"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Suponiendo que tu columna se llama \"Fecha Envío\" o similar (formato YYYY-MM-DD o DD/MM/YYYY)\nconst fechaEnvioStr = $json['Fecha Enviada Solicitud'];\n\nif (!fechaEnvioStr || typeof fechaEnvioStr !== 'string' || !fechaEnvioStr.includes('/')) {\n  return { json: { ...$json, diasTranscurridos: 0, esGhosting: false } };\n}\n\n//Desglosar DD/MM/YYYY\nconst partes = fechaEnvioStr.trim().split('/');\nconst dia = parseInt(partes[0], 10);\nconst mes = parseInt(partes[1], 10) - 1;\nconst anio = parseInt(partes[2], 10);\n\nconst fechaEnvio = new Date(anio, mes, dia);\nconst hoy = new Date();\n\n//Normalizar a medianoche para contar días naturales\nfechaEnvio.setHours(0, 0, 0, 0);\nhoy.setHours(0, 0, 0, 0);\n\nconst diferenciaMs = hoy.getTime() - fechaEnvio.getTime();\nconst diasTranscurridos = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));\n\nreturn {\n  json: {\n    ...$json,\n    diasTranscurridos: diasTranscurridos,\n    esGhosting: diasTranscurridos >= 15\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3104,
+        480
+      ],
+      "id": "4dc083b3-dfb5-4486-b7a6-17664e388685",
+      "name": "Check time of En plazo"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "064b4b04-077c-48bd-811f-3565937a8d4d",
+              "leftValue": "={{ $json.enPlazo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "7153b2d8-23a0-4fb4-8b32-d57e08c70d0c",
+              "leftValue": "={{ $json.esGhosting }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4832,
+        432
+      ],
+      "id": "d08217f3-8ca2-4749-8b2e-b3b99e32e129",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "mode": "list",
+          "cachedResultName": "Job Application Tracker 2.0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Orden": "={{ $json.Orden }}",
+            "Estado": "Enviado - En plazo (< 15 días)"
+          },
+          "matchingColumns": [
+            "Orden"
+          ],
+          "schema": [
+            {
+              "id": "Orden",
+              "displayName": "Orden",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Puesto",
+              "displayName": "Puesto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Stack Principal",
+              "displayName": "Stack Principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Página Web",
+              "displayName": "Página Web",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tiene Easy Apply?",
+              "displayName": "Tiene Easy Apply?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha Enviada Solicitud",
+              "displayName": "Fecha Enviada Solicitud",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Compatibilidad",
+              "displayName": "Compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "veredicto_cto",
+              "displayName": "veredicto_cto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "razonamiento_cto",
+              "displayName": "razonamiento_cto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Notas / Siguientes Pasos",
+              "displayName": "Notas / Siguientes Pasos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5184,
+        304
+      ],
+      "id": "ebc836f1-48da-4ab7-ab24-165dbd9f9d45",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UW4iyAZ8p6MyFAVR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5392,
+        304
+      ],
+      "id": "dccf5882-7b71-49c4-a34e-394bc1fa7505",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=⏳ *SEGUIMIENTO DE CANDIDATURAS* ⏳\n\nSe han actualizado las solicitudes que se encuentran activas y dentro del plazo establecido.\n\n📊 Se han puesto al día *{{ $('Update row in sheet1').all().length }}* ofertas en plazo.\n\n*Empresas monitorizadas:*\n{{ $('Check time of Enviado').all().map(item => `• ${item.json.Empresa} (${item.json.Puesto})`).join('\\n') }}\n\n---\n💻 *Todo en orden en el Google Sheets.*\n\n¡Saludos!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5600,
+        304
+      ],
+      "id": "aa30f63a-c558-4a4a-945f-39d45504dba9",
+      "name": "Send a text message3",
+      "webhookId": "d3bba7c7-2171-4725-a61f-ba8e0695a76e",
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5216,
+        832
+      ],
+      "id": "d307147d-208e-409b-8a67-e44ed18eb107",
+      "name": "Limit3"
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=🔍 *REVISIÓN DE ESTADOS (PLAZOS)* 🔍\n\nSe ha completado el escaneo diario de plazos.\n\nℹ️ Se han evaluado *{{ $('If2').all().length }}* registros que no cumplían las condiciones para este rango (ya sea por estar fuera de plazo o en otro estado).\n\n---\n🤖 *Ejecución completada sin incidencias.*\n\n¡Saludos!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5424,
+        832
+      ],
+      "id": "b5d9256a-92fb-466f-9777-a14559adf688",
+      "name": "Send a text message4",
+      "webhookId": "737b1071-6cf4-42e6-a516-ab9c563894cb",
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "61164a71-225a-4b49-ab8d-afaae6bd3299",
+              "leftValue": "={{ $json.esGhosting }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4e06c3c6-6c52-49e0-adb7-5c3d07263f49",
+              "leftValue": "={{ $json.enPlazo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4832,
+        592
+      ],
+      "id": "495b264a-9244-431d-b606-25fde04a8626",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "mode": "list",
+          "cachedResultName": "Job Application Tracker 2.0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Orden": "={{ $json.Orden }}",
+            "Estado": "Rechazado - Ghosting"
+          },
+          "matchingColumns": [
+            "Orden"
+          ],
+          "schema": [
+            {
+              "id": "Orden",
+              "displayName": "Orden",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Puesto",
+              "displayName": "Puesto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Stack Principal",
+              "displayName": "Stack Principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Página Web",
+              "displayName": "Página Web",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tiene Easy Apply?",
+              "displayName": "Tiene Easy Apply?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha Enviada Solicitud",
+              "displayName": "Fecha Enviada Solicitud",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Compatibilidad",
+              "displayName": "Compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "veredicto_cto",
+              "displayName": "veredicto_cto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "razonamiento_cto",
+              "displayName": "razonamiento_cto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Notas / Siguientes Pasos",
+              "displayName": "Notas / Siguientes Pasos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5344,
+        512
+      ],
+      "id": "4dbcc099-ed80-4276-88a2-e6650f8c9c82",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UW4iyAZ8p6MyFAVR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5552,
+        512
+      ],
+      "id": "e676e60d-e03b-4380-abc3-aaf8e10cd6db",
+      "name": "Limit4"
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=👻 *ALERTA DE GHOSTING DETECTADO* 👻\n\nHan pasado más de 15 días sin respuesta en algunas candidaturas y se han actualizado automáticamente a *Rechazado - Ghosting*.\n\n📉 Total de ofertas afectadas: *{{ $('Update row in sheet2').all().length }}*\n\n*Empresas que han aplicado silencio administrativo:*\n{{ $('Check time of Enviado').all().map(item => `• ${item.json.Empresa} (${item.json.Puesto})`).join('\\n') }}\n\n---\n🧹 *Google Sheets actualizado.* ¡A por la siguiente! 🚀\n\n¡Ánimo y saludos!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5760,
+        512
+      ],
+      "id": "332565f5-6968-4101-adc1-b385ff7abb90",
+      "name": "Send a text message5",
+      "webhookId": "c730cc62-36cf-4ff4-82b8-a58dd7af82a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=📥 *NUEVAS OFERTAS REGISTRADAS* 📥\n\nSe han añadido o actualizado solicitudes en el sistema de seguimiento.\n\n📊 Total de registros procesados: *{{ $('Append or update row in sheet').all().length }}*\n\n⚠️ *Estado de revisión:*\nEstas ofertas aún *no han sido validadas/vetadas* por mi. Requieren de tu visto bueno antes de continuar.\n\n*Empresas añadidas/actualizadas:*\n{{ $('Append or update row in sheet').all().map(item => `• ${item.json.Empresa || item.json.Puesto || 'Oferta detectada'}`).join('\\n') }}\n\n---\n📋 Por favor, *revisa el Google Sheets* para examinar los detalles y emitir tu veredicto. 🧐\n\n¡Saludos!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2192,
+        400
+      ],
+      "id": "07afdd04-0afc-40ea-82c2-8fc65a76bd1c",
+      "name": "Send a text message6",
+      "webhookId": "b15be567-e9f3-4129-9c8b-2e68239fd837",
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        400
+      ],
+      "id": "0ab5f541-399c-4f15-9da5-14d13dea0464",
+      "name": "Limit5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6144,
+        512
+      ],
+      "id": "254a79fc-f108-4397-b2b7-19d26ca766d5",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        6352,
+        512
+      ],
+      "id": "fb342f2e-3a04-4cce-af79-cad3e9830bee",
+      "name": "Limit6"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3.1:latest",
+          "mode": "list",
+          "cachedResultName": "llama3.1:latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Redacta el informe para Stephen con la siguiente información real:\n\n1. Nuevas ofertas añadidas al Google Sheets (pendientes de mi revisión técnica):\n{{ $('Append or update row in sheet').isExecuted ? $('Append or update row in sheet').all().map(i => `- ${i.json.Empresa || 'Empresa'}: ${i.json.Puesto || 'Puesto'}`).join('\\n') : 'Ninguna oferta nueva hoy.' }}\n\n2. Seguimiento de candidaturas enviadas:\n- En plazo (< 15 días): {{ $('Update row in sheet1').isExecuted ? $('Update row in sheet1').all().length : 0 }} ofertas actualizadas.\n- Ghosting detectado (> 15 días): {{ ($('Update row in sheet').isExecuted ? $('Update row in sheet').all().length : 0) + ($('Update row in sheet2').isExecuted ? $('Update row in sheet2').all().length : 0) }} ofertas descartadas (Empresas: {{ [ ...($('Update row in sheet').isExecuted ? $('Update row in sheet').all().map(i => i.json.Empresa) : []), ...($('Update row in sheet2').isExecuted ? $('Update row in sheet2').all().map(i => i.json.Empresa) : []) ].join(', ') || 'Ninguna' }}).\n\n3. Ofertas analizadas en el filtro inicial:\n{{ $('Filter').isExecuted ? `Se filtraron y aprobaron ${$('Filter').all().length} ofertas iniciales.` : 'Sin ejecuciones en el filtro inicial.' }}\n\nCierra animándole y recordando que nos vemos mañana en el próximo reporte."
+            }
+          ]
+        },
+        "options": {
+          "system": "=Eres un asistente automatizado de formato de datos. Tu única tarea es transformar la lista de ofertas de trabajo proporcionada por el usuario en un resumen estructurado en formato HTML.\n\nREGLAS DE FORMATO:\n1. Empieza directamente con \"<p>Hola Stephen, aquí tienes el resumen de las ofertas registradas hoy:</p>\".\n2. Muestra cada oferta dentro de una lista <ul><li> indicando en negrita (<strong>) la Empresa y el Puesto, seguido de la Compatibilidad, la Fuente, el Motivo técnico y el enlace (<a href=\"...\">Ver oferta</a>).\n3. Termina con una frase breve de ánimo para su búsqueda de empleo y despídete cordialmente sin añadir firma final (la firma se añade automáticamente después).\n4. Devuelve únicamente etiquetas HTML básicas (<p>, <ul>, <li>, <strong>, <a>). No uses bloques ```html."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        6560,
+        512
+      ],
+      "id": "535b0ea6-c1fd-4e9a-8d48-a2fdb08f48cc",
+      "name": "Message a model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "jB3uXo25suoehbXJ",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "mrjobs@stephennicholasjones.com",
+        "toEmail": "nicky@stephennicholasjones.com",
+        "subject": "={{ `☕ Briefing Diario CTO | ${$('Append or update row in sheet').isExecuted ? $('Append or update row in sheet').all().length : 0} nuevas ofertas y actualización de candidaturas` }}",
+        "html": "={{ $json.content.replace(/```html|```/g, '').trim() }}\n<br><hr style=\"border:none; border-top:1px solid #eaeaea; margin:20px 0;\">\n<table style=\"font-family: Arial, sans-serif; color: #333;\">\n  <tr>\n    <td style=\"padding-right: 15px;\">\n      <img src=\"https://i.imgur.com/lvqesBa.jpeg\" alt=\"Mr. Jobs\" width=\"75\" height=\"75\" style=\"border-radius: 50%; object-fit: cover; border: 2px solid #007bff;\">\n    </td>\n    <td>\n      <strong style=\"font-size: 16px; color: #111;\">Mr. Jobs</strong><br>\n      <span style=\"font-size: 13px; color: #555;\">Chief Technology Officer (CTO) & AI Agent</span><br>\n      <a href=\"https://stephennicholasjones.com\" style=\"font-size: 12px; color: #007bff; text-decoration: none;\">stephennicholasjones.com</a>\n    </td>\n  </tr>\n</table>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        6912,
+        512
+      ],
+      "id": "0f877717-3169-4e72-aa6f-2fdc118ea344",
+      "name": "Send an Email",
+      "webhookId": "0de54ab2-8da7-45ef-945e-a897682b98e2",
+      "credentials": {
+        "smtp": {
+          "id": "k8NI67njMoyV4r65",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "UPMMdXfyRFE6e0nvw",
+          "mode": "list",
+          "cachedResultName": "Wellfound Jobs Scraper (orgupdate/wellfound-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/UPMMdXfyRFE6e0nvw/input"
+        },
+        "customBody": "={\n  \"countryName\": \"\",\n  \"datePosted\": \"3days\",\n  \"includeKeyword\": \"developer\",\n  \"jobType\": \"FULLTIME\",\n  \"locationName\": \"\",\n  \"pagesToFetch\": 1,\n  \"companyName\": \"\"\n}",
+        "timeout": 300,
+        "maxTotalChargeUsd": 0.2
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        1328
+      ],
+      "id": "4dfcd87c-2ab4-4492-8a6d-854f4dad0295",
+      "name": "Run an Actor and get dataset1",
+      "credentials": {
+        "apifyApi": {
+          "id": "x265pKxytobeGPyn",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d46b0611-eaf3-4b29-a724-c5f802d7a0f2",
+              "name": "title",
+              "value": "={{ $json.job_title }}",
+              "type": "string"
+            },
+            {
+              "id": "73a20393-18e7-4407-a429-7445ea01904a",
+              "name": "company",
+              "value": "={{ $json.company_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0de8651d-e206-47d6-84a2-dd25d22c67fb",
+              "name": "url",
+              "value": "={{ $json.URL }}",
+              "type": "string"
+            },
+            {
+              "id": "116fd2e6-76b0-4bef-a148-d7666fc436c6",
+              "name": "description",
+              "value": "={{ `Puesto: ${$json.job_title} en ${$json.company_name} Ubicación: ${$json.location} Salario: ${$json.salary}` }}",
+              "type": "string"
+            },
+            {
+              "id": "7060dd59-557c-4d8e-887b-9b662acb4d76",
+              "name": "source",
+              "value": "Wellfound",
+              "type": "string"
+            },
+            {
+              "id": "b74a438d-0f4c-431a-95b1-53d298e4fec6",
+              "name": "salary",
+              "value": "={{ $json.salary !== 'N/A' ? $json.salary : 'Salario no especificado' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        1328
+      ],
+      "id": "c66c6a31-05b1-42f3-8bad-46435bf048ab",
+      "name": "Edit Fields - Wellfound"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama3.1:latest",
+          "mode": "list",
+          "cachedResultName": "llama3.1:latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Hola Stephen,\n\nAquí tienes las nuevas ofertas insertadas hoy en Google Sheets (total: {{ $('Append or update row in sheet').all().length }}):\n\n{{ $('Append or update row in sheet').all().map(i => `- Empresa: ${i.json.Empresa} | Puesto: ${i.json.Puesto} | Compatibilidad: ${i.json.Compatibilidad} | Fuente: ${i.json['Página Web']} | Motivo CTO: ${i.json['Notas / Siguientes Pasos']} | Link: ${i.json.URL}`).join('\\n') }}\n\nOrganízalas en una lista HTML clara con enlaces clicables para que pueda revisarlas y postular."
+            }
+          ]
+        },
+        "options": {
+          "system": "=Eres un asistente automatizado de formato de datos. Tu única tarea es transformar la lista de ofertas de trabajo proporcionada por el usuario en un resumen estructurado en formato HTML.\n\nREGLAS DE FORMATO:\n1. Empieza directamente con \"<p>Hola Stephen, aquí tienes el resumen de las ofertas registradas hoy:</p>\".\n2. Muestra cada oferta dentro de una lista <ul><li> indicando en negrita (<strong>) la Empresa y el Puesto, seguido de la Compatibilidad, la Fuente, el Motivo técnico y el enlace (<a href=\"...\">Ver oferta</a>).\n3. Termina con una frase breve de ánimo para su búsqueda de empleo y despídete cordialmente sin añadir firma final (la firma se añade automáticamente después).\n4. Devuelve únicamente etiquetas HTML básicas (<p>, <ul>, <li>, <strong>, <a>). No uses bloques ```html."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        400
+      ],
+      "id": "03eba64a-ac9d-423f-9fa0-08dc4d1b76d8",
+      "name": "Message a model2",
+      "credentials": {
+        "ollamaApi": {
+          "id": "jB3uXo25suoehbXJ",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "mrjobs@stephennicholasjones.com",
+        "toEmail": "nicky@stephennicholasjones.com",
+        "subject": "={{ `🚀 Nuevas Ofertas Insertadas Hoy (${$('Append or update row in sheet').all().length}) | Revisión CTO` }}",
+        "html": "={{ $json.content.replace(/```html|```/g, '').trim() }}\n<br><hr style=\"border:none; border-top:1px solid #eaeaea; margin:20px 0;\">\n<table style=\"font-family: Arial, sans-serif; color: #333;\">\n  <tr>\n    <td style=\"padding-right: 15px;\">\n      <img src=\"https://i.imgur.com/lvqesBa.jpeg\" alt=\"Mr. Jobs\" width=\"75\" height=\"75\" style=\"border-radius: 50%; object-fit: cover; border: 2px solid #007bff;\">\n    </td>\n    <td>\n      <strong style=\"font-size: 16px; color: #111;\">Mr. Jobs</strong><br>\n      <span style=\"font-size: 13px; color: #555;\">Chief Technology Officer (CTO) & AI Agent</span><br>\n      <a href=\"https://stephennicholasjones.com\" style=\"font-size: 12px; color: #007bff; text-decoration: none;\">stephennicholasjones.com</a>\n    </td>\n  </tr>\n</table>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2672,
+        480
+      ],
+      "id": "5231aaf0-ab94-4576-bf1e-b16867adc428",
+      "name": "Send an Email1",
+      "webhookId": "492b8717-dc43-415b-b901-285ba0466937",
+      "credentials": {
+        "smtp": {
+          "id": "k8NI67njMoyV4r65",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - freehire.me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request - freehire.me": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields Apify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - freehire.me",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - WTTJ",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request - tecnoempleo.com",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Run an Actor and get dataset1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Limit5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields Apify": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - freehire.me": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - WTTJ": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - WTTJ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - WTTJ": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Joppy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HTTP Request - Joppy": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - tecnoempleo.com": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Check time of En plazo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Check time of Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check time of En plazo": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check time of Enviado": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Limit4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit4": {
+      "main": [
+        [
+          {
+            "node": "Send a text message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit5": {
+      "main": [
+        [
+          {
+            "node": "Send a text message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message6": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message5": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message4": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Limit6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit6": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields - Wellfound",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields - Wellfound": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "Send an Email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Europe/Madrid"
+  },
+  "versionId": "afd56f71-bbe6-428c-8dd7-b4632d2eb102",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "34a6cbc795bbe7b97a63714e2849351d481399f927ec95f194a05531cda7ad9b"
+  },
+  "nodeGroups": [],
+  "id": "rERMsvi2HsIgcz5U",
+  "tags": []
+}
