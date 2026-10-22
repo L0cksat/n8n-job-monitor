@@ -8,6 +8,18 @@
             {
               "field": "cronExpression",
               "expression": "0 0 9 * * *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "0 0 13 * * *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "0 0 17 * * *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "0 0 21 * * *"
             }
           ]
         }
@@ -34,57 +46,6 @@
       ],
       "id": "bce3b84b-e24d-496a-bf22-cc226a1e58d9",
       "name": "Split Out"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://host.docker.internal:11434/api/generate",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{\n  {\n    \"model\": \"llama3.1\",\n    \"prompt\": \"Eres Mr. Jobs, un CTO técnico filtrando ofertas de trabajo para Stephen (candidato Junior/Mid). Evalúa la compatibilidad basándote estrictamente en este perfil:\\n\\nPERFIL DE STEPHEN:\\n- Nivel: Junior / Entry-Level / Mid (hasta 3 años máx). Graduado en DAW + 13 años de experiencia operativa.\\n- Stack Desarrollo: Java (Spring Boot), Python (FastAPI, Django, Flask), TypeScript, Angular, Node.js, SQL (MySQL), MongoDB, Docker, Git, Linux.\\n- Stack IA & Automatización: n8n (avanzado), Agentes IA, servidores MCP, creación de Skills, arquitecturas RAG, LLMs (Ollama), Prompt Engineering, Cursor.\\n- Idiomas: Inglés nativo y Español nativo.\\n\\nREGLAS CRÍTICAS DE RECHAZO AUTOMÁTICO (Responde NO):\\n1. Nivel Senior: Exige perfil 'Senior', 'Lead', 'Principal', 'Staff' o más de 3-4 años de experiencia.\\n2. Ubicación/Modalidad: Rechaza cualquier oferta Presencial o Híbrida FUERA de la Comunidad Valenciana (Alicante, Valencia, Castellón, Torrevieja, Elche, Murcia). Solo acepta 100% Remoto o Híbrido/Presencial si es en la Comunidad Valenciana.\\n3. No es una oferta real: Si el título o descripción es solo el eslogan de una empresa (ej. 'Digital healthcare insurance') sin especificar un puesto técnico.\\n4. Stack incompatible: Puestos exclusivos de C#/.NET, PHP/Moodle, Ruby, Go, Rust o Marketing/Ventas.\\n\\nResponde ESTRICTAMENTE empezando con 'SÍ' o 'NO', seguido de una puntuación del 1 al 10 entre paréntesis (ej: (8/10)), un guion y una frase corta explicando el motivo.\\n\\nTítulo: \" + $json.title + \"\\nEmpresa: \" + $json.company + \"\\nDescripción: \" + $json.description,\n    \"stream\": false\n  }\n}}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        336,
-        560
-      ],
-      "id": "34055994-477f-40c5-b59f-b560e4f7b1e7",
-      "name": "HTTP Request1"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "03dfb2ff-200a-4e03-addd-e719bd5ab785",
-              "leftValue": "={{ $json.response }}",
-              "rightValue": "SÍ",
-              "operator": {
-                "type": "string",
-                "operation": "startsWith"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.3,
-      "position": [
-        736,
-        400
-      ],
-      "id": "cc43ac89-55f1-45ca-8625-abf9a2a137fb",
-      "name": "Filter"
     },
     {
       "parameters": {
@@ -131,27 +92,27 @@
         "operation": "appendOrUpdate",
         "documentId": {
           "__rl": true,
-          "value": "YOUR_GOOGLE_SHEET_ID",
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "Empresa": "={{ $('Filter').item.json.company }}",
-            "URL": "={{ $('Filter').item.json.url.replace(/\\)/g, '') }}",
-            "Puesto": "={{ $('Filter').item.json.title }}",
+            "Empresa": "={{ $('Compare Datasets').item.json.company }}",
+            "URL": "={{ $('Compare Datasets').item.json.url.replace(/\\)/g, '') }}",
+            "Puesto": "={{ $('Compare Datasets').item.json.title }}",
             "Estado": "Guardado",
             "Notas / Siguientes Pasos": "={{ $json.razonamiento_cto }}",
-            "Página Web": "={{ $('Filter').item.json.source }}",
+            "Página Web": "={{ $('Compare Datasets').item.json.source }}",
             "Compatibilidad": "={{\n  (() => {\n    const veredicto = $json.veredicto_cto;\n    const razonamiento = $json.razonamiento_cto || \"\";\n    const textoCompleto = razonamiento.toLowerCase();\n\n    if (veredicto === \"APROBADO\") {\n      // Si está aprobado, determinamos si es excepcional o media-alta\n      if (textoCompleto.includes(\"excepcional\") || textoCompleto.includes(\"perfecto\") || textoCompleto.includes(\"ideal\")) {\n        return \"Alta (9/10)\";\n      }\n      return \"Media-Alta (7/10)\";\n    } else {\n      // Si está rechazado, clasificamos según el nivel de afinidad o motivo\n      if (textoCompleto.includes(\"junior\") || textoCompleto.includes(\"fringe\")) {\n        return \"Media (5/10)\";\n      }\n      if (textoCompleto.includes(\"senior\") || textoCompleto.includes(\"experiencia\")) {\n        return \"Baja (4/10)\";\n      }\n      return \"Baja (2/10)\";\n    }\n  })()\n}}"
           },
           "matchingColumns": [
@@ -280,7 +241,9 @@
           "cachedResultName": "Linkedin Jobs Scraper (curious_coder/linkedin-jobs-scraper)",
           "cachedResultUrl": "https://console.apify.com/actors/hKByXkMQaC5Qt9UMN/input"
         },
-        "customBody": "={\n  \"autoConvertToAiSearch\": true,\n  \"datePosted\": \"past24Hours\",\n  \"keywords\": \"(\\\"Junior Backend\\\" OR \\\"Junior Full Stack\\\" OR \\\"Spring Boot\\\" OR \\\"Angular\\\" OR \\\"Python\\\") AND Remote\",\n  \"limitPerSource\": 20,\n  \"location\": \"Spain\",\n  \"scrapeCompany\": true,\n  \"splitByLocation\": false,\n  \"under10Applicants\": false,\n  \"urls\": [],\n  \"companyIds\": []\n}"
+        "customBody": "={\n  \"autoConvertToAiSearch\": true,\n  \"datePosted\": \"past24Hours\",\n  \"keywords\": \"(\\\"Junior Backend\\\" OR \\\"Junior Full Stack\\\" OR \\\"Spring Boot\\\" OR \\\"Angular\\\" OR \\\"Python\\\") AND Remote\",\n  \"limitPerSource\": 20,\n  \"location\": \"Spain\",\n  \"scrapeCompany\": true,\n  \"splitByLocation\": false,\n  \"under10Applicants\": false,\n  \"urls\": [],\n  \"companyIds\": []\n}",
+        "timeout": {},
+        "maxTotalChargeUsd": {}
       },
       "type": "@apify/n8n-nodes-apify.apify",
       "typeVersion": 2,
@@ -386,21 +349,6 @@
       "name": "Edit Fields - freehire.me"
     },
     {
-      "parameters": {
-        "mode": "combine",
-        "combineBy": "combineByPosition",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        544,
-        416
-      ],
-      "id": "58511cc1-df27-43ca-91e6-50a3a9e213b9",
-      "name": "Merge"
-    },
-    {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
@@ -424,7 +372,7 @@
             },
             {
               "name": "x-csrf-token",
-              "value": "YOUR_WTTJ_CSRF_TOKEN"
+              "value": "P6ewRr0QuiLFSoQFKpFjllCICW0="
             }
           ]
         },
@@ -553,7 +501,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://securetoken.googleapis.com/v1/token?key=YOUR_FIREBASE_API_KEY",
+        "url": "https://securetoken.googleapis.com/v1/token?key=AIzaSyCw2QBeUA3Ta7HFfDpzZEKqZo4WhvMPh3Y",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
@@ -563,7 +511,7 @@
             },
             {
               "name": "refresh_token",
-              "value": "YOUR_JOPPY_REFRESH_TOKEN"
+              "value": "AMf-vByXlImncPZV_vKXkHQkeBympGhbt0X_RDg4GhFiIUX5PRlt0gICHMI_uX9LKUciCgTJSsUmhgb4u-y42_z8SfYiGAV1otgsPe94E3NRuEy1lsk4vTho2AekcQ3fZLRlg2iDu6ic5L_NUv0mwWjoOr5I5prJLP8E5Ln1cVQz7SC2Ak7rHjY"
             }
           ]
         },
@@ -601,8 +549,8 @@
       "type": "@n8n/n8n-nodes-langchain.ollama",
       "typeVersion": 1,
       "position": [
-        944,
-        400
+        1072,
+        496
       ],
       "id": "e620def2-f45c-466f-93f1-9b846e505bf9",
       "name": "Message a model",
@@ -637,8 +585,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1296,
-        400
+        1360,
+        496
       ],
       "id": "458d4e6a-92fa-4e8b-a772-8190bb20c2a2",
       "name": "Edit Fields1"
@@ -675,28 +623,6 @@
       ],
       "id": "137ffbdb-7fa1-49f7-ba88-c97b0d8bf330",
       "name": "If"
-    },
-    {
-      "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=🚀 *NUEVA OFERTA APROBADA* 🚀\n\n*Puesto:* {{ $('Filter').item.json.title }}\n*Empresa:* {{ $('Filter').item.json.company }}\n*Salario:* {{ $json.salary }}\n*Fuente:* {{ $('Filter').item.json.source }}\n\n🧠 *Razonamiento del CTO:*\n{{ $json.razonamiento_cto }}\n\n🔗 [Ver oferta completa]({{ $('Filter').item.json.url.replace(/\\)/g, '') }})",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        1920,
-        592
-      ],
-      "id": "557b62c5-2550-46d1-9a01-eb2cf6a12701",
-      "name": "Send a text message",
-      "webhookId": "a3beaad3-f270-4945-a633-73c557bb4cfc",
-      "credentials": {
-        "telegramApi": {
-          "id": "j2EbqbtZIzb1ND5v",
-          "name": "BotFather Token"
-        }
-      }
     },
     {
       "parameters": {
@@ -827,50 +753,6 @@
       "name": "If1"
     },
     {
-      "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=✅ *REVISIÓN DIARIA COMPLETADA*\nNo hay nuevas solicitudes en ghosting 👻 por hoy (hay {{ $('If1').all(1).length }} candidaturas activas dentro de plazo).\n\n\n👨🏽‍💻 Por favor consulta tu Google Sheets y prueba de nuevo. 👨🏽‍💻\n\n¡Gracias!\n",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        3760,
-        576
-      ],
-      "id": "ac55c6ec-3e57-456d-97e9-29f1d5565995",
-      "name": "Send a text message1",
-      "webhookId": "d6689082-ee9b-4999-8cd6-09624724978d",
-      "credentials": {
-        "telegramApi": {
-          "id": "j2EbqbtZIzb1ND5v",
-          "name": "BotFather Token"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=📝 *GOOGLE SHEETS ACTUALIZADO* 📝\n\nSe han actualizado las filas con solicitudes que han sobrepasado los 15 días.\n\n👻 Te han hecho *ghosting* {{ $('Update row in sheet').all().length }} empresas. Boo! 👻\n\nEstas han sido las empresas que no te quieren...\n{{ $('Update row in sheet').all().map(item => `· ${item.json.Empresa}`).join('\\n') }}\n\n*Boo* 👻 por su parte!👎😤\n\n👨🏽‍💻 Por favor, revise el *Google Sheets* para más información. 👨🏽‍💻\n\n¡Gracias! 😎",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        3920,
-        384
-      ],
-      "id": "a709f67f-fdce-456c-a229-43c395085a1b",
-      "name": "Send a text message2",
-      "webhookId": "277cbb72-a7c2-416e-8343-ea5a7bda0fc0",
-      "credentials": {
-        "telegramApi": {
-          "id": "j2EbqbtZIzb1ND5v",
-          "name": "BotFather Token"
-        }
-      }
-    },
-    {
       "parameters": {},
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
@@ -896,17 +778,17 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "YOUR_GOOGLE_SHEET_ID",
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
         },
         "filtersUI": {
           "values": [
@@ -939,17 +821,17 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "YOUR_GOOGLE_SHEET_ID",
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -1136,17 +1018,17 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "YOUR_GOOGLE_SHEET_ID",
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
         },
         "filtersUI": {
           "values": [
@@ -1251,17 +1133,17 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "YOUR_GOOGLE_SHEET_ID",
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -1456,28 +1338,6 @@
       "name": "Limit2"
     },
     {
-      "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=⏳ *SEGUIMIENTO DE CANDIDATURAS* ⏳\n\nSe han actualizado las solicitudes que se encuentran activas y dentro del plazo establecido.\n\n📊 Se han puesto al día *{{ $('Update row in sheet1').all().length }}* ofertas en plazo.\n\n*Empresas monitorizadas:*\n{{ $('Check time of Enviado').all().map(item => `• ${item.json.Empresa} (${item.json.Puesto})`).join('\\n') }}\n\n---\n💻 *Todo en orden en el Google Sheets.*\n\n¡Saludos!",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        5600,
-        304
-      ],
-      "id": "aa30f63a-c558-4a4a-945f-39d45504dba9",
-      "name": "Send a text message3",
-      "webhookId": "d3bba7c7-2171-4725-a61f-ba8e0695a76e",
-      "credentials": {
-        "telegramApi": {
-          "id": "j2EbqbtZIzb1ND5v",
-          "name": "BotFather Token"
-        }
-      }
-    },
-    {
       "parameters": {},
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
@@ -1487,28 +1347,6 @@
       ],
       "id": "d307147d-208e-409b-8a67-e44ed18eb107",
       "name": "Limit3"
-    },
-    {
-      "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=🔍 *REVISIÓN DE ESTADOS (PLAZOS)* 🔍\n\nSe ha completado el escaneo diario de plazos.\n\nℹ️ Se han evaluado *{{ $('If2').all().length }}* registros que no cumplían las condiciones para este rango (ya sea por estar fuera de plazo o en otro estado).\n\n---\n🤖 *Ejecución completada sin incidencias.*\n\n¡Saludos!",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        5424,
-        832
-      ],
-      "id": "b5d9256a-92fb-466f-9777-a14559adf688",
-      "name": "Send a text message4",
-      "webhookId": "737b1071-6cf4-42e6-a516-ab9c563894cb",
-      "credentials": {
-        "telegramApi": {
-          "id": "j2EbqbtZIzb1ND5v",
-          "name": "BotFather Token"
-        }
-      }
     },
     {
       "parameters": {
@@ -1559,17 +1397,17 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "YOUR_GOOGLE_SHEET_ID",
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
           "mode": "list",
           "cachedResultName": "Job Application Tracker 2.0",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -1764,50 +1602,6 @@
       "name": "Limit4"
     },
     {
-      "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=👻 *ALERTA DE GHOSTING DETECTADO* 👻\n\nHan pasado más de 15 días sin respuesta en algunas candidaturas y se han actualizado automáticamente a *Rechazado - Ghosting*.\n\n📉 Total de ofertas afectadas: *{{ $('Update row in sheet2').all().length }}*\n\n*Empresas que han aplicado silencio administrativo:*\n{{ $('Check time of Enviado').all().map(item => `• ${item.json.Empresa} (${item.json.Puesto})`).join('\\n') }}\n\n---\n🧹 *Google Sheets actualizado.* ¡A por la siguiente! 🚀\n\n¡Ánimo y saludos!",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        5760,
-        512
-      ],
-      "id": "332565f5-6968-4101-adc1-b385ff7abb90",
-      "name": "Send a text message5",
-      "webhookId": "c730cc62-36cf-4ff4-82b8-a58dd7af82a7",
-      "credentials": {
-        "telegramApi": {
-          "id": "j2EbqbtZIzb1ND5v",
-          "name": "BotFather Token"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=📥 *NUEVAS OFERTAS REGISTRADAS* 📥\n\nSe han añadido o actualizado solicitudes en el sistema de seguimiento.\n\n📊 Total de registros procesados: *{{ $('Append or update row in sheet').all().length }}*\n\n⚠️ *Estado de revisión:*\nEstas ofertas aún *no han sido validadas/vetadas* por mi. Requieren de tu visto bueno antes de continuar.\n\n*Empresas añadidas/actualizadas:*\n{{ $('Append or update row in sheet').all().map(item => `• ${item.json.Empresa || item.json.Puesto || 'Oferta detectada'}`).join('\\n') }}\n\n---\n📋 Por favor, *revisa el Google Sheets* para examinar los detalles y emitir tu veredicto. 🧐\n\n¡Saludos!",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        2192,
-        400
-      ],
-      "id": "07afdd04-0afc-40ea-82c2-8fc65a76bd1c",
-      "name": "Send a text message6",
-      "webhookId": "b15be567-e9f3-4129-9c8b-2e68239fd837",
-      "credentials": {
-        "telegramApi": {
-          "id": "j2EbqbtZIzb1ND5v",
-          "name": "BotFather Token"
-        }
-      }
-    },
-    {
       "parameters": {},
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
@@ -1851,7 +1645,7 @@
         "messages": {
           "values": [
             {
-              "content": "=Redacta el informe para Stephen con la siguiente información real:\n\n1. Nuevas ofertas añadidas al Google Sheets (pendientes de mi revisión técnica):\n{{ $('Append or update row in sheet').isExecuted ? $('Append or update row in sheet').all().map(i => `- ${i.json.Empresa || 'Empresa'}: ${i.json.Puesto || 'Puesto'}`).join('\\n') : 'Ninguna oferta nueva hoy.' }}\n\n2. Seguimiento de candidaturas enviadas:\n- En plazo (< 15 días): {{ $('Update row in sheet1').isExecuted ? $('Update row in sheet1').all().length : 0 }} ofertas actualizadas.\n- Ghosting detectado (> 15 días): {{ ($('Update row in sheet').isExecuted ? $('Update row in sheet').all().length : 0) + ($('Update row in sheet2').isExecuted ? $('Update row in sheet2').all().length : 0) }} ofertas descartadas (Empresas: {{ [ ...($('Update row in sheet').isExecuted ? $('Update row in sheet').all().map(i => i.json.Empresa) : []), ...($('Update row in sheet2').isExecuted ? $('Update row in sheet2').all().map(i => i.json.Empresa) : []) ].join(', ') || 'Ninguna' }}).\n\n3. Ofertas analizadas en el filtro inicial:\n{{ $('Filter').isExecuted ? `Se filtraron y aprobaron ${$('Filter').all().length} ofertas iniciales.` : 'Sin ejecuciones en el filtro inicial.' }}\n\nCierra animándole y recordando que nos vemos mañana en el próximo reporte."
+              "content": "=Redacta el informe para Stephen con la siguiente información real:\n\n1. Nuevas ofertas añadidas al Google Sheets (pendientes de mi revisión técnica):\n{{ $('Append or update row in sheet').isExecuted ? $('Append or update row in sheet').all().map(i => `- ${i.json.Empresa || 'Empresa'}: ${i.json.Puesto || 'Puesto'}`).join('\\n') : 'Ninguna oferta nueva hoy.' }}\n\n2. Seguimiento de candidaturas enviadas:\n- En plazo (< 15 días): {{ $('Update row in sheet1').isExecuted ? $('Update row in sheet1').all().length : 0 }} ofertas actualizadas.\n- Ghosting detectado (> 15 días): {{ ($('Update row in sheet').isExecuted ? $('Update row in sheet').all().length : 0) + ($('Update row in sheet2').isExecuted ? $('Update row in sheet2').all().length : 0) }} ofertas descartadas (Empresas: {{ [ ...($('Update row in sheet').isExecuted ? $('Update row in sheet').all().map(i => i.json.Empresa) : []), ...($('Update row in sheet2').isExecuted ? $('Update row in sheet2').all().map(i => i.json.Empresa) : []) ].join(', ') || 'Ninguna' }}).\n\n3. Ofertas analizadas en el filtro inicial:\n{{ $('Compare Datasets').isExecuted ? `Se filtraron y aprobaron ${$('Compare Datasets').all().length} ofertas iniciales.` : 'Sin ejecuciones en el filtro inicial.' }}\n\nCierra animándole y recordando que nos vemos mañana en el próximo reporte."
             }
           ]
         },
@@ -1867,34 +1661,11 @@
       ],
       "id": "535b0ea6-c1fd-4e9a-8d48-a2fdb08f48cc",
       "name": "Message a model1",
+      "executeOnce": true,
       "credentials": {
         "ollamaApi": {
           "id": "jB3uXo25suoehbXJ",
           "name": "Ollama account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "fromEmail": "YOUR_FROM_EMAIL",
-        "toEmail": "YOUR_TO_EMAIL",
-        "subject": "={{ `☕ Briefing Diario CTO | ${$('Append or update row in sheet').isExecuted ? $('Append or update row in sheet').all().length : 0} nuevas ofertas y actualización de candidaturas` }}",
-        "html": "={{ $json.content.replace(/```html|```/g, '').trim() }}\n<br><hr style=\"border:none; border-top:1px solid #eaeaea; margin:20px 0;\">\n<table style=\"font-family: Arial, sans-serif; color: #333;\">\n  <tr>\n    <td style=\"padding-right: 15px;\">\n      <img src=\"https://i.imgur.com/lvqesBa.jpeg\" alt=\"Mr. Jobs\" width=\"75\" height=\"75\" style=\"border-radius: 50%; object-fit: cover; border: 2px solid #007bff;\">\n    </td>\n    <td>\n      <strong style=\"font-size: 16px; color: #111;\">Mr. Jobs</strong><br>\n      <span style=\"font-size: 13px; color: #555;\">Chief Technology Officer (CTO) & AI Agent</span><br>\n      <a href=\"https://stephennicholasjones.com\" style=\"font-size: 12px; color: #007bff; text-decoration: none;\">stephennicholasjones.com</a>\n    </td>\n  </tr>\n</table>",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
-      "position": [
-        6912,
-        512
-      ],
-      "id": "0f877717-3169-4e72-aa6f-2fdc118ea344",
-      "name": "Send an Email",
-      "webhookId": "0de54ab2-8da7-45ef-945e-a897682b98e2",
-      "credentials": {
-        "smtp": {
-          "id": "k8NI67njMoyV4r65",
-          "name": "SMTP account"
         }
       }
     },
@@ -2016,8 +1787,188 @@
     },
     {
       "parameters": {
-        "fromEmail": "YOUR_FROM_EMAIL",
-        "toEmail": "YOUR_TO_EMAIL",
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ JSON.stringify($json).toLowerCase() }}",
+              "rightValue": "usa only",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "2",
+              "leftValue": "={{ JSON.stringify($json).toLowerCase() }}",
+              "rightValue": "us citizens",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "3",
+              "leftValue": "={{ JSON.stringify($json).toLowerCase() }}",
+              "rightValue": "b2b",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        480
+      ],
+      "id": "994a4584-b786-4412-8d18-af36758a4006",
+      "name": "Filtro Duro (Ubicación/Tóxico)"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XXe78zzSr_2g6v20Se2OvWaQJbfS0g4VZh6DkNoFsCQ",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        656
+      ],
+      "id": "e58bb776-ad8a-4e6c-b8c7-188795d22902",
+      "name": "Obtener Historial (Sheets)",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UW4iyAZ8p6MyFAVR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "company",
+              "field2": "Empresa"
+            },
+            {
+              "field1": "title",
+              "field2": "Puesto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.compareDatasets",
+      "typeVersion": 2.3,
+      "position": [
+        864,
+        512
+      ],
+      "id": "85e62c1e-d481-46b1-a7d1-eff9d6595361",
+      "name": "Compare Datasets"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4e1c17cc-ce44-4f2b-ba49-71cef4f04a61",
+              "name": "company",
+              "value": "={{ $json.company.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "66410575-6cb7-4db0-ab58-e1e3abde6234",
+              "name": "title",
+              "value": "={{ $json.title.trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        480
+      ],
+      "id": "e74fca1b-79c9-43c8-9e63-7e84f52b197b",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=📥 *NUEVAS OFERTAS REGISTRADAS* 📥\n\nSe han añadido o actualizado solicitudes en el sistema de seguimiento.\n\n📊 Total de registros procesados: *{{ $('Append or update row in sheet').all().length }}*\n\n⚠️ *Estado de revisión:*\nEstas ofertas aún *no han sido validadas/vetadas* por mi. Requieren de tu visto bueno antes de continuar.\n\n*Empresas añadidas/actualizadas:*\n{{ $('Append or update row in sheet').all().map(item => `• ${item.json.Empresa || item.json.Puesto || 'Oferta detectada'}`).join('\\n') }}\n\n---\n📋 Por favor, *revisa el Google Sheets* para examinar los detalles y emitir tu veredicto. 🧐\n\n¡Saludos!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2192,
+        400
+      ],
+      "id": "07afdd04-0afc-40ea-82c2-8fc65a76bd1c",
+      "name": "Mensaje - NUEVAS OFERTAS REGISTRADAS",
+      "webhookId": "b15be567-e9f3-4129-9c8b-2e68239fd837",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=🚀 *NUEVA OFERTA APROBADA* 🚀\n\n*Puesto:* {{ $('Compare Datasets').item.json.title }}\n*Empresa:* {{ $('Compare Datasets').item.json.company }}\n*Fuente:* {{ $('Compare Datasets').item.json.source }}\n\n🧠 *Razonamiento del CTO:*\n{{ $json.razonamiento_cto }}\n\n🔗 [Ver oferta completa]({{ $('Compare Datasets').item.json.url.replace(/\\)/g, '') }})",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        592
+      ],
+      "id": "557b62c5-2550-46d1-9a01-eb2cf6a12701",
+      "name": "Mensaje - NUEVA OFERTA APROBADA",
+      "webhookId": "a3beaad3-f270-4945-a633-73c557bb4cfc",
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "mrjobs@stephennicholasjones.com",
+        "toEmail": "nicky@stephennicholasjones.com",
         "subject": "={{ `🚀 Nuevas Ofertas Insertadas Hoy (${$('Append or update row in sheet').all().length}) | Revisión CTO` }}",
         "html": "={{ $json.content.replace(/```html|```/g, '').trim() }}\n<br><hr style=\"border:none; border-top:1px solid #eaeaea; margin:20px 0;\">\n<table style=\"font-family: Arial, sans-serif; color: #333;\">\n  <tr>\n    <td style=\"padding-right: 15px;\">\n      <img src=\"https://i.imgur.com/lvqesBa.jpeg\" alt=\"Mr. Jobs\" width=\"75\" height=\"75\" style=\"border-radius: 50%; object-fit: cover; border: 2px solid #007bff;\">\n    </td>\n    <td>\n      <strong style=\"font-size: 16px; color: #111;\">Mr. Jobs</strong><br>\n      <span style=\"font-size: 13px; color: #555;\">Chief Technology Officer (CTO) & AI Agent</span><br>\n      <a href=\"https://stephennicholasjones.com\" style=\"font-size: 12px; color: #007bff; text-decoration: none;\">stephennicholasjones.com</a>\n    </td>\n  </tr>\n</table>",
         "options": {}
@@ -2029,14 +1980,166 @@
         480
       ],
       "id": "5231aaf0-ab94-4576-bf1e-b16867adc428",
-      "name": "Send an Email1",
+      "name": "Email - Nuevas Ofertas Insertadas Hoy",
       "webhookId": "492b8717-dc43-415b-b901-285ba0466937",
+      "executeOnce": true,
       "credentials": {
         "smtp": {
           "id": "k8NI67njMoyV4r65",
           "name": "SMTP account"
         }
       }
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=✅ *REVISIÓN DIARIA COMPLETADA*\nNo hay nuevas solicitudes en ghosting 👻 por hoy (hay {{ $('If1').all(1).length }} candidaturas activas dentro de plazo).\n\n\n👨🏽‍💻 Por favor consulta tu Google Sheets y prueba de nuevo. 👨🏽‍💻\n\n¡Gracias!\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3760,
+        576
+      ],
+      "id": "ac55c6ec-3e57-456d-97e9-29f1d5565995",
+      "name": "Mensaje - REVISIÓN DIARIA COMPLETADA",
+      "webhookId": "d6689082-ee9b-4999-8cd6-09624724978d",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=📝 *GOOGLE SHEETS ACTUALIZADO* 📝\n\nSe han actualizado las filas con solicitudes que han sobrepasado los 15 días.\n\n👻 Te han hecho *ghosting* {{ $('Update row in sheet').all().length }} empresas. Boo! 👻\n\nEstas han sido las empresas que no te quieren...\n{{ $('Update row in sheet').all().map(item => `· ${item.json.Empresa}`).join('\\n') }}\n\n*Boo* 👻 por su parte!👎😤\n\n👨🏽‍💻 Por favor, revise el *Google Sheets* para más información. 👨🏽‍💻\n\n¡Gracias! 😎",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3920,
+        384
+      ],
+      "id": "a709f67f-fdce-456c-a229-43c395085a1b",
+      "name": "Mensaje - GOOGLE SHEETS ACTUALIZADO",
+      "webhookId": "277cbb72-a7c2-416e-8343-ea5a7bda0fc0",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=🔍 *REVISIÓN DE ESTADOS (PLAZOS)* 🔍\n\nSe ha completado el escaneo diario de plazos.\n\nℹ️ Se han evaluado *{{ $('If2').all().length }}* registros que no cumplían las condiciones para este rango (ya sea por estar fuera de plazo o en otro estado).\n\n---\n🤖 *Ejecución completada sin incidencias.*\n\n¡Saludos!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5424,
+        832
+      ],
+      "id": "b5d9256a-92fb-466f-9777-a14559adf688",
+      "name": "Mensaje - REVISIÓN DE ESTADOS (PLAZOS)",
+      "webhookId": "737b1071-6cf4-42e6-a516-ab9c563894cb",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=⏳ *SEGUIMIENTO DE CANDIDATURAS* ⏳\n\nSe han actualizado las solicitudes que se encuentran activas y dentro del plazo establecido.\n\n📊 Se han puesto al día *{{ $('Update row in sheet1').all().length }}* ofertas en plazo.\n\n*Empresas monitorizadas:*\n{{ $('Check time of Enviado').all().map(item => `• ${item.json.Empresa} (${item.json.Puesto})`).join('\\n') }}\n\n---\n💻 *Todo en orden en el Google Sheets.*\n\n¡Saludos!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5600,
+        304
+      ],
+      "id": "aa30f63a-c558-4a4a-945f-39d45504dba9",
+      "name": "Mensaje - SEGUIMIENTO DE CANDIDATURAS",
+      "webhookId": "d3bba7c7-2171-4725-a61f-ba8e0695a76e",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5736423989",
+        "text": "=👻 *ALERTA DE GHOSTING DETECTADO* 👻\n\nHan pasado más de 15 días sin respuesta en algunas candidaturas y se han actualizado automáticamente a *Rechazado - Ghosting*.\n\n📉 Total de ofertas afectadas: *{{ $('Update row in sheet2').all().length }}*\n\n*Empresas que han aplicado silencio administrativo:*\n{{ $('Check time of Enviado').all().map(item => `• ${item.json.Empresa} (${item.json.Puesto})`).join('\\n') }}\n\n---\n🧹 *Google Sheets actualizado.* ¡A por la siguiente! 🚀\n\n¡Ánimo y saludos!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5760,
+        512
+      ],
+      "id": "332565f5-6968-4101-adc1-b385ff7abb90",
+      "name": "Mensaje - GHOSTING DETECTADO",
+      "webhookId": "c730cc62-36cf-4ff4-82b8-a58dd7af82a7",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "j2EbqbtZIzb1ND5v",
+          "name": "BotFather Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "mrjobs@stephennicholasjones.com",
+        "toEmail": "nicky@stephennicholasjones.com",
+        "subject": "={{ `☕ Briefing Diario CTO | ${$('Append or update row in sheet').isExecuted ? $('Append or update row in sheet').all().length : 0} nuevas ofertas y actualización de candidaturas` }}",
+        "html": "={{ $json.content.replace(/```html|```/g, '').trim() }}\n<br><hr style=\"border:none; border-top:1px solid #eaeaea; margin:20px 0;\">\n<table style=\"font-family: Arial, sans-serif; color: #333;\">\n  <tr>\n    <td style=\"padding-right: 15px;\">\n      <img src=\"https://i.imgur.com/lvqesBa.jpeg\" alt=\"Mr. Jobs\" width=\"75\" height=\"75\" style=\"border-radius: 50%; object-fit: cover; border: 2px solid #007bff;\">\n    </td>\n    <td>\n      <strong style=\"font-size: 16px; color: #111;\">Mr. Jobs</strong><br>\n      <span style=\"font-size: 13px; color: #555;\">Chief Technology Officer (CTO) & AI Agent</span><br>\n      <a href=\"https://stephennicholasjones.com\" style=\"font-size: 12px; color: #007bff; text-decoration: none;\">stephennicholasjones.com</a>\n    </td>\n  </tr>\n</table>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        6912,
+        512
+      ],
+      "id": "0f877717-3169-4e72-aa6f-2fdc118ea344",
+      "name": "Email - Briefing Diario CTO",
+      "webhookId": "0de54ab2-8da7-45ef-945e-a897682b98e2",
+      "executeOnce": true,
+      "credentials": {
+        "smtp": {
+          "id": "k8NI67njMoyV4r65",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        5040,
+        816
+      ],
+      "id": "51c1435e-1de0-47d3-87fc-982f1dec33e4",
+      "name": "Merge"
     }
   ],
   "pinData": {},
@@ -2052,33 +2155,11 @@
         ]
       ]
     },
-    "HTTP Request1": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
     "HTTP Request - freehire.me": {
       "main": [
         [
           {
             "node": "Split Out",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Filter": {
-      "main": [
-        [
-          {
-            "node": "Message a model",
             "type": "main",
             "index": 0
           }
@@ -2165,27 +2246,16 @@
         ]
       ]
     },
-    "Merge": {
-      "main": [
-        [
-          {
-            "node": "Filter",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "No Operation, do nothing": {
       "main": [
         [
           {
-            "node": "HTTP Request1",
+            "node": "Filtro Duro (Ubicación/Tóxico)",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Merge",
+            "node": "Obtener Historial (Sheets)",
             "type": "main",
             "index": 0
           }
@@ -2273,7 +2343,7 @@
       "main": [
         [
           {
-            "node": "Send a text message",
+            "node": "Mensaje - NUEVA OFERTA APROBADA",
             "type": "main",
             "index": 0
           },
@@ -2348,22 +2418,11 @@
         ]
       ]
     },
-    "Send a text message2": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Limit": {
       "main": [
         [
           {
-            "node": "Send a text message2",
+            "node": "Mensaje - GOOGLE SHEETS ACTUALIZADO",
             "type": "main",
             "index": 0
           }
@@ -2374,7 +2433,7 @@
       "main": [
         [
           {
-            "node": "Send a text message1",
+            "node": "Mensaje - REVISIÓN DIARIA COMPLETADA",
             "type": "main",
             "index": 0
           }
@@ -2452,9 +2511,9 @@
         ],
         [
           {
-            "node": "Limit3",
+            "node": "Merge",
             "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
@@ -2474,7 +2533,7 @@
       "main": [
         [
           {
-            "node": "Send a text message3",
+            "node": "Mensaje - SEGUIMIENTO DE CANDIDATURAS",
             "type": "main",
             "index": 0
           }
@@ -2485,7 +2544,7 @@
       "main": [
         [
           {
-            "node": "Send a text message4",
+            "node": "Mensaje - REVISIÓN DE ESTADOS (PLAZOS)",
             "type": "main",
             "index": 0
           }
@@ -2503,7 +2562,7 @@
         ],
         [
           {
-            "node": "Limit3",
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
@@ -2525,7 +2584,7 @@
       "main": [
         [
           {
-            "node": "Send a text message5",
+            "node": "Mensaje - GHOSTING DETECTADO",
             "type": "main",
             "index": 0
           }
@@ -2536,67 +2595,7 @@
       "main": [
         [
           {
-            "node": "Send a text message6",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message6": {
-      "main": [
-        [
-          {
-            "node": "Message a model2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message": {
-      "main": [
-        []
-      ]
-    },
-    "Send a text message1": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message3": {
-      "main": [
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message5": {
-      "main": [
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message4": {
-      "main": [
-        [
-          {
-            "node": "No Operation, do nothing1",
+            "node": "Mensaje - NUEVAS OFERTAS REGISTRADAS",
             "type": "main",
             "index": 0
           }
@@ -2629,7 +2628,7 @@
       "main": [
         [
           {
-            "node": "Send an Email",
+            "node": "Email - Briefing Diario CTO",
             "type": "main",
             "index": 0
           }
@@ -2662,18 +2661,144 @@
       "main": [
         [
           {
-            "node": "Send an Email1",
+            "node": "Email - Nuevas Ofertas Insertadas Hoy",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Send an Email1": {
+    "Filtro Duro (Ubicación/Tóxico)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Historial (Sheets)": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Compare Datasets": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje - NUEVAS OFERTAS REGISTRADAS": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje - NUEVA OFERTA APROBADA": {
+      "main": [
+        []
+      ]
+    },
+    "Email - Nuevas Ofertas Insertadas Hoy": {
       "main": [
         [
           {
             "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje - REVISIÓN DIARIA COMPLETADA": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje - GOOGLE SHEETS ACTUALIZADO": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje - REVISIÓN DE ESTADOS (PLAZOS)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje - SEGUIMIENTO DE CANDIDATURAS": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje - GHOSTING DETECTADO": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Limit3",
             "type": "main",
             "index": 0
           }
@@ -2690,7 +2815,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "timezone": "Europe/Madrid"
   },
-  "versionId": "afd56f71-bbe6-428c-8dd7-b4632d2eb102",
+  "versionId": "885bd99f-fd9d-4b0c-a4f4-97a9f8833104",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "34a6cbc795bbe7b97a63714e2849351d481399f927ec95f194a05531cda7ad9b"
