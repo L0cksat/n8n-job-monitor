@@ -72,7 +72,7 @@
           "parameters": [
             {
               "name": "User-Agent",
-              "value": "freehire-search-skill/1.0 (+[https://freehire.me](https://freehire.me))"
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
           ]
         },
@@ -501,7 +501,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://securetoken.googleapis.com/v1/token?key=AIzaSyCw2QBeUA3Ta7HFfDpzZEKqZo4WhvMPh3Y",
+        "url": "https://securetoken.googleapis.com/v1/token?key=YOUR_API_KEY_HERE",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
@@ -511,7 +511,7 @@
             },
             {
               "name": "refresh_token",
-              "value": "AMf-vByXlImncPZV_vKXkHQkeBympGhbt0X_RDg4GhFiIUX5PRlt0gICHMI_uX9LKUciCgTJSsUmhgb4u-y42_z8SfYiGAV1otgsPe94E3NRuEy1lsk4vTho2AekcQ3fZLRlg2iDu6ic5L_NUv0mwWjoOr5I5prJLP8E5Ln1cVQz7SC2Ak7rHjY"
+              "value": "YOUR_REFRESH_TOKEN_HERE"
             }
           ]
         },
@@ -542,7 +542,7 @@
           ]
         },
         "options": {
-          "system": "=Eres Mr. Jobs, un CTO técnico analítico y estricto. Tu objetivo es auditar ofertas de trabajo para Stephen (Junior/Mid Full-Stack & AI Automation Engineer).\n\nPERFIL DE STEPHEN:\n- Nivel: Junior a Mid (0 a 3 años de experiencia técnica).\n- Stack: Java (Spring Boot), Python, TypeScript, Angular, Node.js, SQL, Docker.\n- Especialidad IA: Automatización con n8n, Agentes IA, MCP, RAG, LLMs, Prompt Engineering.\n- Ubicación: Alicante (Comunidad Valenciana, España).\n\nREGLAS DE RECHAZO AUTOMÁTICO (\"RECHAZADO\"):\n1. Piden perfil Senior (+4 años de experiencia obligatoria).\n2. Es Presencial o Híbrido fuera de la Comunidad Valenciana (ej. Híbrido en Madrid, Barcelona o extranjero = RECHAZADO, salvo que permita 100% remoto).\n3. No describe un puesto de trabajo real o no especifica requisitos técnicos (ej. fichas genéricas de empresas).\n4. El stack principal es totalmente ajeno (C#, .NET, PHP, Ruby, iOS/Swift, C++).\n\nINSTRUCCIÓN CRÍTICA:\nResponde EXCLUSIVAMENTE con un objeto JSON válido:\n{\n  \"veredicto\": \"APROBADO\", // o \"RECHAZADO\"\n  \"razonamiento\": \"Explicación directa de máximo 2 líneas del motivo.\"\n}",
+          "system": "=Eres Mr. Jobs, un CTO técnico analítico y estricto. Tu objetivo es auditar ofertas de trabajo para Stephen (Junior/Mid Backend & AI Automation Engineer).\n\nPERFIL DE STEPHEN:\n- Nivel: Junior a Mid (0 a 3 años de experiencia técnica).\n- Stack: Java (Spring Boot), Python, TypeScript, Angular, Node.js, SQL, Docker.\n- Especialidad IA: Automatización con n8n, Agentes IA, MCP, RAG, LLMs.\n- Ubicación: Alicante (España). Idiomas: Inglés (Nativo), Español (Bilingüe).\n\nREGLAS DE RECHAZO AUTOMÁTICO (\"RECHAZADO\"):\n1. Piden perfil explícitamente Senior o más de 3 años de experiencia obligatoria.\n2. El rol principal es puramente Operaciones/Sistemas: DevOps, SysAdmin, Helpdesk, Soporte IT, Data Engineer o Ciberseguridad = RECHAZADO. (Stephen es Desarrollador Backend/Software).\n3. Es Presencial o Híbrido fuera de la Comunidad Valenciana (ej. Madrid o Barcelona = RECHAZADO, salvo que especifique \"100% Remoto\").\n4. No describe un puesto de trabajo real o falta la descripción de los requisitos técnicos.\n5. El lenguaje de programación o stack principal es ajeno (C#, .NET, PHP, Ruby, iOS/Swift, C++).\n\nINSTRUCCIÓN CRÍTICA:\nResponde EXCLUSIVAMENTE con un objeto JSON válido:\n{\n  \"veredicto\": \"APROBADO\", // o \"RECHAZADO\"\n  \"razonamiento\": \"Explicación directa de máximo 2 líneas del motivo.\"\n}",
           "format": "json"
         }
       },
@@ -649,29 +649,6 @@
     },
     {
       "parameters": {
-        "url": "https://www.tecnoempleo.com/ofertas-trabajo/?en_remoto=,1,&forma_minima=,6,&ex=,3,4,",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "User-Agent",
-              "value": "Mozilla/5.0"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        -592,
-        1024
-      ],
-      "id": "0d325932-178f-4dc6-bac1-e3010945629e",
-      "name": "HTTP Request - tecnoempleo.com"
-    },
-    {
-      "parameters": {
         "operation": "extractHtmlContent",
         "extractionValues": {
           "values": [
@@ -691,6 +668,11 @@
               "key": "company",
               "cssSelector": "h3.fs-5 + a",
               "returnArray": true
+            },
+            {
+              "key": "description",
+              "cssSelector": "span.hidden-md-down.text-gray-800",
+              "returnArray": true
             }
           ]
         },
@@ -707,7 +689,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const item = $input.first().json;\nconst titles = item.title || [];\nconst urls = item.url || [];\nconst companies = item.company || [];\n\nconst results = [];\n\nfor (let i = 0; i < titles.length; i++) {\n  results.push({\n    json: {\n      title: titles[i],\n      url: urls[i],\n      company: companies[i] || \"No especificada\",\n      source: \"Tecnoempleo\"\n    }\n  });\n}\n\nreturn results;"
+        "jsCode": "const item = $input.first().json;\nconst titles = item.title || [];\nconst urls = item.url || [];\nconst companies = item.company || [];\nconst description = item.description || [];\n\nconst results = [];\n\nfor (let i = 0; i < titles.length; i++) {\n  results.push({\n    json: {\n      title: titles[i],\n      url: urls[i],\n      company: companies[i] || \"No especificada\",\n      description: description[i] || \"Sin descripción\",\n      source: \"Tecnoempleo\"\n    }\n  });\n}\n\nreturn results;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1909,6 +1891,7 @@
             }
           ]
         },
+        "includeOtherFields": true,
         "options": {}
       },
       "type": "n8n-nodes-base.set",
@@ -2016,7 +1999,7 @@
     {
       "parameters": {
         "chatId": "5736423989",
-        "text": "=📝 *GOOGLE SHEETS ACTUALIZADO* 📝\n\nSe han actualizado las filas con solicitudes que han sobrepasado los 15 días.\n\n👻 Te han hecho *ghosting* {{ $('Update row in sheet').all().length }} empresas. Boo! 👻\n\nEstas han sido las empresas que no te quieren...\n{{ $('Update row in sheet').all().map(item => `· ${item.json.Empresa}`).join('\\n') }}\n\n*Boo* 👻 por su parte!👎😤\n\n👨🏽‍💻 Por favor, revise el *Google Sheets* para más información. 👨🏽‍💻\n\n¡Gracias! 😎",
+        "text": "=📝 *GOOGLE SHEETS ACTUALIZADO* 📝\n\nSe han actualizado las filas con solicitudes que han sobrepasado los 15 días.\n\n👻 Te han hecho *ghosting* {{ $('Update row in sheet').all().length }} empresas. Boo! 👻\n\nEstas han sido las empresas que no te quieren...\n{{ $('If1').all().map(item => `· ${item.json.Empresa}`).join('\\n') }}\n\n*Boo* 👻 por su parte!👎😤\n\n👨🏽‍💻 Por favor, revise el *Google Sheets* para más información. 👨🏽‍💻\n\n¡Gracias! 😎",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
@@ -2140,6 +2123,37 @@
       ],
       "id": "51c1435e-1de0-47d3-87fc-982f1dec33e4",
       "name": "Merge"
+    },
+    {
+      "parameters": {
+        "url": "https://app.scrapingbee.com/api/v1/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "api_key",
+              "value": "6DK5RC90O2V79321BNOXUNBLCNG7VJAMWERQUZZLIDMCPGH0JWM0QFHZ0BGAUHH1T931EWA3NP4T6ZI4"
+            },
+            {
+              "name": "url",
+              "value": "https://www.tecnoempleo.com/ofertas-trabajo/?en_remoto=,1,&forma_minima=,6,&ex=,3,4"
+            },
+            {
+              "name": "premium_proxy",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -640,
+        1008
+      ],
+      "id": "1cb2ee3e-9d53-4dd6-b958-bf1ad4f9eb3c",
+      "name": "HTTP Request-tecnoempleo"
     }
   ],
   "pinData": {},
@@ -2181,11 +2195,6 @@
       "main": [
         [
           {
-            "node": "Run an Actor and get dataset",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "HTTP Request - freehire.me",
             "type": "main",
             "index": 0
@@ -2201,7 +2210,17 @@
             "index": 0
           },
           {
-            "node": "HTTP Request - tecnoempleo.com",
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request-tecnoempleo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Run an Actor and get dataset",
             "type": "main",
             "index": 0
           },
@@ -2361,17 +2380,6 @@
         [
           {
             "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request - tecnoempleo.com": {
-      "main": [
-        [
-          {
-            "node": "HTML",
             "type": "main",
             "index": 0
           }
@@ -2804,6 +2812,17 @@
           }
         ]
       ]
+    },
+    "HTTP Request-tecnoempleo": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -2815,7 +2834,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "timezone": "Europe/Madrid"
   },
-  "versionId": "885bd99f-fd9d-4b0c-a4f4-97a9f8833104",
+  "versionId": "98f3134a-7640-48da-a718-99091ca8a0a2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "34a6cbc795bbe7b97a63714e2849351d481399f927ec95f194a05531cda7ad9b"
