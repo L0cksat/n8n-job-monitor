@@ -2132,7 +2132,7 @@
           "parameters": [
             {
               "name": "api_key",
-              "value": "6DK5RC90O2V79321BNOXUNBLCNG7VJAMWERQUZZLIDMCPGH0JWM0QFHZ0BGAUHH1T931EWA3NP4T6ZI4"
+              "value": "YOUR_API_KEY_HERE"
             },
             {
               "name": "url",
